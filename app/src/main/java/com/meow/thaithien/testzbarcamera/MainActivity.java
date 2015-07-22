@@ -21,6 +21,7 @@ public class MainActivity extends Activity {
 
     Boolean FlashMode = true;
     String TAG = "Zbar";
+    String LIFECYCLE_TAG="LifeCycle";
     FrameLayout frameLayout;// a placeholder for code scanner preview
     ZBarScannerView myScannerView;// scanner view which we will add into frameLayout
     ZBarScannerView.ResultHandler resultHandler;//result handler for myScannerView
@@ -40,6 +41,7 @@ public class MainActivity extends Activity {
                 // Do something with the result here
                 Log.v(TAG, result.getContents()); // Prints scan results
                 Log.v(TAG, result.getBarcodeFormat().getName()); // Prints the scan format (qrcode, pdf417 etc.)
+                turnOnCamera();//Keep the light on
 
                 //Result show here
                 ShowResultDialog(result.getContents());
@@ -63,6 +65,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+       turnOnCamera();
+    }
+
+    private void turnOnCamera(){
         //TODO: SET Result Handle Here
         myScannerView.setResultHandler(resultHandler);
         //TODO Start camera
@@ -72,10 +78,24 @@ public class MainActivity extends Activity {
         myScannerView.setAutoFocus(true);
     }
 
+    protected void onStop() {
+        // Stop camera on stop
+        super.onStop();
+        Log.i(LIFECYCLE_TAG, "onStop");
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i(LIFECYCLE_TAG, "onDestroy");
+    }
+
     @Override
     public void onPause() {
         super.onPause();
-        myScannerView.stopCamera();           // Stop camera on pause
+        Log.i(LIFECYCLE_TAG,"onPause");
+        myScannerView.stopCamera();
     }
 
     @Override
@@ -106,7 +126,7 @@ public class MainActivity extends Activity {
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                MainActivity.this.onResume();
+               // MainActivity.this.onResume();
             }
         });
        Dialog dialog = builder.create();

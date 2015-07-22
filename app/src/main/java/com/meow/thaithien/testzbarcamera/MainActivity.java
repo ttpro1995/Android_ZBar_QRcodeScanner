@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import me.dm7.barcodescanner.zbar.Result;
@@ -17,10 +19,13 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView;
 
 public class MainActivity extends Activity {
 
+    Boolean FlashMode = true;
     String TAG = "Zbar";
     FrameLayout frameLayout;// a placeholder for code scanner preview
     ZBarScannerView myScannerView;// scanner view which we will add into frameLayout
     ZBarScannerView.ResultHandler resultHandler;//result handler for myScannerView
+
+    Button FlashOnOffButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +50,14 @@ public class MainActivity extends Activity {
         myScannerView = new ZBarScannerView(MainActivity.this);
         frameLayout.addView(myScannerView);
 
+        //A button to turn flash on and off
+        FlashOnOffButton = (Button) findViewById(R.id.FlashOnOff_bt);
+        FlashOnOffButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TurnFlashOnOff();
+            }
+        });
     }
 
     @Override
@@ -55,7 +68,7 @@ public class MainActivity extends Activity {
         //TODO Start camera
         myScannerView.startCamera();
         //TODO Set flash and autofocus
-        myScannerView.setFlash(true);
+        myScannerView.setFlash(FlashMode);
         myScannerView.setAutoFocus(true);
     }
 
@@ -98,6 +111,13 @@ public class MainActivity extends Activity {
         });
        Dialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void TurnFlashOnOff(){
+        if (FlashMode)
+            FlashMode =false;
+        else FlashMode = true;
+        myScannerView.setFlash(FlashMode);
     }
 
 }
